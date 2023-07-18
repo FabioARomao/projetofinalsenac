@@ -1,0 +1,39 @@
+{% extends 'bases/base.html' %}
+{% block corpo %}
+<h1>{{ titulo }}</h1>
+{% if messages %}
+<div class="alert alert-danger alert-dismissible">
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  <strong>Erro!</strong>
+  <br>
+  {% for mensagem in messages %}
+  {{ mensagem }}
+  {% endfor %}
+ 
+</div>
+{% endif %}
+
+<form class="d-grid" method="POST">
+
+
+  <label>Nome:</label><br>
+  <input class="form-control" type="text" name="nome" value="{{ nome }}">
+
+
+  <label>Preço:</label><br>
+  <input class="form-control" type="text" name="preco" value="{{ preco }}">
+
+
+  <label>Quantidade:</label><br>
+
+
+  <input class="form-control" type="number" name="quantidade" value="{{ quantidade }}">
+
+
+  <label>Descrição:</label><br>
+  <textarea class="form-control" type="text" rows=5 name="descricao" value="{{ descricao }}"></textarea><br>
+
+  <input class="btn btn-primary btn-sm" type="submit" value="Salvar">
+</form>
+{% endblock %}
+  

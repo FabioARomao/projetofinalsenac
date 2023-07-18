@@ -1,0 +1,49 @@
+{% extends 'bases/base.html' %}
+{% load static %}
+{% block corpo %}
+  <h1>Cadastro de Pessoas</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Sobrenome</th>
+        <th scope="col">Cpf</th>
+        <th scope="col">Endereço</th>
+        <th scope="col">Atualizar</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in itens %}
+      <tr>
+        <th scope="row">{{ item.ID }}</th>
+        <td>{{ item.Nome }}</td>
+        <td>{{ item.Sobrenome }}</td>
+        <td>{{ item.Cpf }}</td>
+        <td>{{ item.Endereço }}</td>
+        <td>
+          <form action="{% url 'remove' item.ID %}">
+            <button class="btn btn-danger">
+              Remover
+            </button>
+          </form>
+        </td>
+        <td>
+          <form action="{% url 'atualizar' item.ID %}">
+            <button class="btn btn-info">
+              Editar
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<form class='d-grid' action="{% url 'adicionar' %}">
+  <button class="btn btn-primary btn-sm">
+    Adicionar
+  </button>
+</form>
+
+{% endblock %}
