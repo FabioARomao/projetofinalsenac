@@ -37,9 +37,9 @@ def remove(request, item_id):
         devolver = {'itens': dados}
         return render(request, 'index.html', devolver)
 
-        dados1 = importacaoBD.obtendoPessoas()
-        devolver = {'itens': dados1}
-        return render(request, 'index.html', devolver)
+        #dados1 = importacaoBD.obtendoPessoas()
+        #devolver = {'itens': dados1}
+        #return render(request, 'index.html', devolver)
         # Removendo todos os itens
         # cursor.execute("DELETE FROM produtos")
 

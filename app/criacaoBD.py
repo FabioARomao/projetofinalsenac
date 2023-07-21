@@ -1,29 +1,39 @@
-import sqlite3
 import psycopg2
-import os
 
-# Aponta o arquivo do Banco de Dados (BD)
-arquivo = "database.db"
+def conecta_bd():
+    conexao = psycopg2.connect(host='0.0.0.0',
+                            database='auth',
+                            port=5432,
+                            user='postgres',
+                            password='postgres')
+    return conexao
 
-# Verifica se existe um banco de dados
-if not(os.path.exists(arquivo)):
+def criar_tabela(sql):
+    conexao = conecta_bd()
+    cur = conexao.cursor()
+    try:
+        cur.execute(sql)
+        conexao.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        conexao.rollback()
+        cur.close()
+        return 1
+    cur.close()
 
-  # Cria uma conexão com BD
-  conexao = sqlite3.connect(arquivo)
+sql = '''CREATE TABLE public.pessoas(
+      id SERIAL PRIMARY KEY,
+      nome TEXT,
+      sobrenome TEXT,
+      cpf INTEGER,
+      endereco TEXT,
+      criado DATE
+    )'''
 
-  # Cria a tabela de produtos
-  conexao.execute("""
-  CREATE TABLE produtos(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT,
-    preco REAL,
-    quantidade INTEGER,
-    descricao TEXT
-  )
-  """)
-  
+criar_tabela(sql)
+
   # Cria os registros no SQL
-  produtos = [
+produtos = [
     #Nome,  Preço, Quantidade, Descrição
     ('Caneta',5.00,100,"Caneta azul, azul caneta"),
     ('Laptop', 2999.99, 100, "Notebook da Xuxa em parceria com Positivo"),
@@ -49,15 +59,53 @@ if not(os.path.exists(arquivo)):
       ('Ventilador de teto', 99.99, 100, 'Um ventilador fixado no teto para circulação de ar.')
   ]
 
-  # Inserir os dados na lista na tabela do SQL
-  conexao.executemany("""
-  INSERT INTO produtos (nome, preco, quantidade, descricao)
-  VALUES (?,?,?,?)""", produtos)
+def inserir_db(sql):
+    conexao = conecta_bd()
+    cur = conexao.cursor()
+    try:
+        cur.execute(sql)
+        conexao.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        conexao.rollback()
+        cur.close()
+        return 1
+    cur.close()
 
-  # Subir as alterações
-  conexao.commit()
+#Atualiza um item do banco de dados
+def atualizar(id, nome, preco, quantidade, descricao):
+  conecta_bd(
+  """
+  update produtos set nome = ?, preco = ?, quantidade = ?, descricao = ? where id = ?
+  """,
+  (nome, preco, quantidade, descricao, id)
+    
+  )
 
-  # Fecha a conexão com SQL
-  conexao.close()
+def atualizar_pessoa(id, nome, sobrenome, cpf, endereco):
+  conecta_bd(
+  """
+  update pessoas set nome = ?, sobrenome = ?, cpf = ?, endereco  = ? where id = ?
+  """,
+  (nome, sobrenome, cpf, endereco, id)
+    
+  )
 
-  print("Feita a criação do BD")
+# adiciona um item no banco de dados
+def adicionar(nome, preco, quantidade, descricao):
+  conecta_bd(
+  """
+  insert into produtos (nome, preco, quantidade, descricao) values (?,?,?,?)
+  """,
+    (nome, preco, quantidade, descricao)
+    
+  )
+
+def adicionar_pessoa(nome, sobrenome, cpf, endereco):
+  conecta_bd(
+  """
+  insert into produtos (nome, sobrenome, cpf, endereco) values (?,?,?,?)
+  """,
+    (nome, sobrenome, cpf, endereco)
+    
+  )

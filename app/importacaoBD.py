@@ -1,4 +1,5 @@
-import sqlite3 as SQL
+import psycopg2 as SQL
+#import sqlite3 as SQL
 from . import criacaoBD as CBD
 
 # Obtendo dados
