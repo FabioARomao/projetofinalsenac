@@ -1,11 +1,56 @@
-{% extends "bases/bases.html" %}
+<!DOCTYPE html>
+<html>
 
-{% block content %}
-<h1 class="title">
-  Voce está no site de callbacks !!!
-</h1>
-<h2 class="subtitle">
- 
-</h2>
-{% endblock %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GraffBack</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
+</head>
+
+<body>
+
+  
+
+    <div class="hero is-fullheight-with-navbar is-dark">
+            <div class="navbar-end">
+              <div class="navbar-item">
+                <div class="buttons">
+                  <a class="button is-success", href="signup">
+                    <strong>Cadastrar</strong>
+                  </a>
+                  <a class="button is-light", href="login">
+                    <strong>Entrar</strong>
+                  </a>
+                  {% if current_user.is_mainenticated %}
+                  <a class="button is-danger", href="logout">
+                    <strong>Sair</strong>
+                   </a>
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+
+            <div class="hero-body">
+              <div class="container has-text-centered">
+                 {% block content %}
+                 <h1 class="title">
+                  Voce está no site de callbacks !!!
+                </h1>
+                <h2 class="subtitle">
+                 conectado!!
+                </h2>
+                 {% endblock %}
+              </div>
+          </div>
+    
+    </div>
+
+</body>
+
+</html>
+
+
 

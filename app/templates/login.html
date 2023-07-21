@@ -14,11 +14,31 @@
 {% csrf_token %}
 
 {% block content %}
+
+    <div class="hero is-fullheight-with-navbar is-dark">
+            <div class="navbar-end">
+              <div class="navbar-item">
+                <div class="buttons">
+                  <a class="button is-success", href="signup">
+                    <strong>Cadastrar</strong>
+                  </a>
+                  {% if current_user.is_mainenticated %}
+                  <a class="button is-danger", href="logout">
+                    <strong>Sair</strong>
+                   </a>
+                  {% endif %}
+                </div>
+              </div>
+
+          </div>
+  
+  
+  
 <div class="column is-4 is-offset-4">
     <h3 class="title">Faca Seu Login</h3>
     <div class="box">
         <form method="POST" action="login">
-          {% csrf_token %}
+
             <div class="field">
                 <div class="control">
                     <input class="input is-large" type="email" name="email" placeholder="Digite seu Email" autofocus="" required>

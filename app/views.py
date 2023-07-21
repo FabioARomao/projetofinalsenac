@@ -36,6 +36,10 @@ def remove(request, item_id):
         dados = importacaoBD.obtendoProdutos()
         devolver = {'itens': dados}
         return render(request, 'index.html', devolver)
+
+        dados1 = importacaoBD.obtendoPessoas()
+        devolver = {'itens': dados1}
+        return render(request, 'index.html', devolver)
         # Removendo todos os itens
         # cursor.execute("DELETE FROM produtos")
 
@@ -46,8 +50,8 @@ def produtos(request):
   return render(request, 'produtos.html', devolver)
 
 def pessoas(request):
-  dados = importacaoBD.obtendoProdutos()
-  devolver = {'itens': dados}
+  dados1 = importacaoBD.obtendoPessoas()
+  devolver = {'itens': dados1}
   return render(request, 'pessoas.html', devolver)
 
 def pratos(request, argumento):
@@ -99,13 +103,13 @@ def atualizar(request, item_id):
 
 
 
-def get_db_connection():
-    conn = psycopg2.connect(host='localhost',
-                            database='auth',
-                            port=5438,
-                            user=os.environ['DB_USERNAME'],
-                            password=os.environ['DB_PASSWORD'])
-    return conn
+#def get_db_connection():
+#    conn = psycopg2.connect(host='localhost',
+#                            database='auth',
+#                            port=5438,
+#                            user=os.environ['DB_USERNAME'],
+#                            password=os.environ['DB_PASSWORD'])
+#    return conn
 
 
 #def index():
@@ -134,27 +138,27 @@ nomes = leitura.leitura_de_arquivo("babys.json")
 
 
 
-def login(request):
+def login(request, methods=(['GET'])):
   if request.method == 'GET':
     return render (request, 'login.html')
 
 
-def login(request):
+def login_post(request, methods=(['POST'])):
     if request.method == 'POST':
-        login_user(user, remember=remember)
-        return render (request, 'profile.html')
+        login(user, remember=remember)
+        return render (request, 'login.html')
         email = request.form['email']
         password = request.form['password']
         remember = True if request.form.get('remember') else False
     
 
-    con = get_db_connection()
-    cur = con.cursor()
-    cur.execute("select email from logins where email=email;")
-    user = cur.fetchone()
-    print(user, password)
-    cur.close()
-    con.close()
+    #con = get_db_connection()
+    #cur = con.cursor()
+    #cur.execute("select email from logins where email=email;")
+    #user = cur.fetchone()
+    #print(user, password)
+    #cur.close()
+    #con.close()
     
     if not user or not hashers(user, password):
         return redirect(url_for('profile'))
@@ -167,7 +171,7 @@ def signup(request):
     return render(request, 'signup.html')
 
 
-def signup(request):
+def signup_post(request):
     if request.method == 'POST':
       return render (request, 'login.html')
       name = request.form['name']

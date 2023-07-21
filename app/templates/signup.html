@@ -15,11 +15,30 @@
 
 
 {% block content %}
+    <div class="hero is-fullheight-with-navbar is-dark">
+            <div class="navbar-end">
+              <div class="navbar-item">
+                <div class="buttons">
+                  <a class="button is-light", href="login">
+                    <strong>Entrar</strong>
+                  </a>
+                  {% if current_user.is_mainenticated %}
+                  <a class="button is-danger", href="logout">
+                    <strong>Sair</strong>
+                   </a>
+                  {% endif %}
+                </div>
+              </div>
+
+          </div>
+
+
+
+
 <div class="column is-4 is-offset-4">
     <h3 class="title">Cadastrar</h3>
     <div class="box">
         <form method="POST" action="signup">
-          {% csrf_token %}
             <div class="field">
                 <div class="control">
                     <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
@@ -34,12 +53,17 @@
 
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Password">
+                    <input class="input is-large" type="password" name="password" placeholder="Senha">
                 </div>
             </div>
 
             <button type="submit" class="button is-block is-info is-large is-fullwidth">Gravar</button>
+
+
         </form>
     </div>
 </div>
+              
+  
+
 {% endblock %}

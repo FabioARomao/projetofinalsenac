@@ -1,4 +1,5 @@
 import sqlite3
+import psycopg2
 import os
 
 # Aponta o arquivo do Banco de Dados (BD)
