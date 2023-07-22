@@ -3,7 +3,7 @@ from . import importacaoBD
 from . import criacaoBD
 from . import gerenciarBD
 from django.contrib import messages
-from django.contrib.auth import get_user, logout, authenticate, hashers
+from django.contrib.auth import get_user, logout, authenticate, hashers, login, auth_login
 from django.contrib.auth.decorators import login_required
 import sqlite3
 import psycopg2
@@ -100,24 +100,6 @@ def atualizar(request, item_id):
     return redirect('index')
   return render(request, 'gerenciar.html', {'titulo': 'Atualizar'})
 
-
-
-
-#def get_db_connection():
-#    conn = psycopg2.connect(host='localhost',
-#                            database='auth',
-#                            port=5438,
-#                            user=os.environ['DB_USERNAME'],
-#                            password=os.environ['DB_PASSWORD'])
-#    return conn
-
-
-#def index():
-#    conn = get_db_connection()
-#    conn.close()
-#    return render_template('index.html')
-#    #return 'Index'
-
 @login_required
 def profile(request):
     return render(request, 'profile.html', name=get_user.name)
@@ -138,40 +120,49 @@ nomes = leitura.leitura_de_arquivo("babys.json")
 
 
 
-def login(request, methods=(['GET'])):
+class LoginForm(forms.Form):
+   email = forms.Charfield()
+   password = fprms.Charfield(widget= forms.PasswordInput)
+   remember_me = forms.BoolenField()
+
+def login(request):
   if request.method == 'GET':
     return render (request, 'login.html')
 
 
-def login_post(request, methods=(['POST'])):
+def login(request):
     if request.method == 'POST':
-        login(user, remember=remember)
-        return render (request, 'login.html')
-        email = request.form['email']
-        password = request.form['password']
-        remember = True if request.form.get('remember') else False
+        form - LoginForm(request.POST)
+        if form.is_valid():
+           email = form.cleaned_data['email']
+           password = form.cleaned_data['password']
+           remember_me =  form.cleaned_data['remember_me']
+           user = authenticate(email=email, password=password)
+           if user:
+              login(request, user)
+              if not remember_me:
+                 request.session.set_expiry(0)
+
+              return redirect('login.html')
+    else:
+        form = LoginForm()
+        render(request, 'profile.html', {'form': form})
     
 
-    #con = get_db_connection()
-    #cur = con.cursor()
-    #cur.execute("select email from logins where email=email;")
-    #user = cur.fetchone()
-    #print(user, password)
-    #cur.close()
-    #con.close()
-    
-    if not user or not hashers(user, password):
-        return redirect(url_for('profile'))
-    login_user(user, remember=remember)
-    return redirect(url_for('profile'))
-    
+    con = criacaoBD.conecta_bd()
+    cur = con.cursor()
+    cur.execute("select email from logins where email=email;")
+    user = cur.fetchone()
+    print(user, password)
+    cur.close()
+    con.close()
 
 def signup(request):
   if request.method == 'GET':
     return render(request, 'signup.html')
 
 
-def signup_post(request):
+def signup(request):
     if request.method == 'POST':
       return render (request, 'login.html')
       name = request.form['name']
