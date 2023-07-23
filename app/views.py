@@ -2,13 +2,16 @@ from django.shortcuts import render, redirect
 from . import importacaoBD
 from . import criacaoBD
 from . import gerenciarBD
-from django.contrib import messages
-from django.contrib.auth import get_user, logout, authenticate, hashers, login, auth_login
+from . import leitura
+from django.http import JsonResponse
+from django.contrib import messages, auth
+from django.contrib.auth import get_user, logout, authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-import sqlite3
 import psycopg2
 import os
-from . import leitura
+
 
 
 def index(request):
@@ -16,7 +19,7 @@ def index(request):
 
 def remove(request, item_id):
         # Cria uma conexão com BD e importa o arquivo de CBD
-        conexao = sqlite3.connect(criacaoBD.arquivo)
+        conexao = psycopg2.connect(criacaoBD.arquivo)
         
         # Criar um cursor
         cursor = conexao.cursor()
@@ -51,8 +54,8 @@ def produtos(request):
 
 def pessoas(request):
   dados1 = importacaoBD.obtendoPessoas()
-  devolver = {'itens': dados1}
-  return render(request, 'pessoas.html', devolver)
+  devolver1 = {'itens': dados1}
+  return render(request, 'pessoas.html', devolver1)
 
 def pratos(request, argumento):
   return render(request, 'pratos.html', {
@@ -102,12 +105,12 @@ def atualizar(request, item_id):
 
 @login_required
 def profile(request):
-    return render(request, 'profile.html', name=get_user.name)
+    return render(request, 'profile.html')
 
 
 @login_required
 def dashboard(request):
-    return render (request, 'dashboard.html', name=get_user.name)
+    return render(request, 'dashboard.html')
 
 @login_required
 def callback(request):
@@ -118,100 +121,57 @@ def callback(request):
 
 nomes = leitura.leitura_de_arquivo("babys.json")
 
-
-
-class LoginForm(forms.Form):
-   email = forms.Charfield()
-   password = fprms.Charfield(widget= forms.PasswordInput)
-   remember_me = forms.BoolenField()
-
 def login(request):
-  if request.method == 'GET':
+    if (request.method == 'POST'):
+          email = request.POST['email']
+          password = request.POST['password']
+          if not email.strip():
+            print("Email nao pode ficar vazio")
+            return redirect ('login')
+          if not password.strip():
+              print("Senha nao pode ficar vazio")
+              return redirect ('login')
+          print(email, password)
+          if User.objects.filter(email=email).exists():
+             nome = User.objects.filter(email=email).values_list('username', flat=True).get
+             user = auth.authenticate(request, username=nome, password=password)
+             if user is not None:
+                auth.login(request, user)
+                print('Login Realizado com Sucesso!!!')
+                return redirect('dashboard') 
+          return redirect('profile')
     return render (request, 'login.html')
 
-
-def login(request):
-    if request.method == 'POST':
-        form - LoginForm(request.POST)
-        if form.is_valid():
-           email = form.cleaned_data['email']
-           password = form.cleaned_data['password']
-           remember_me =  form.cleaned_data['remember_me']
-           user = authenticate(email=email, password=password)
-           if user:
-              login(request, user)
-              if not remember_me:
-                 request.session.set_expiry(0)
-
-              return redirect('login.html')
-    else:
-        form = LoginForm()
-        render(request, 'profile.html', {'form': form})
-    
-
-    con = criacaoBD.conecta_bd()
-    cur = con.cursor()
-    cur.execute("select email from logins where email=email;")
-    user = cur.fetchone()
-    print(user, password)
-    cur.close()
-    con.close()
-
 def signup(request):
-  if request.method == 'GET':
-    return render(request, 'signup.html')
-
-
-def signup(request):
-    if request.method == 'POST':
-      return render (request, 'login.html')
-      name = request.form['name']
-      email = request.form['email']
-      password = request.form['password']
-
-      con = get_db_connection()
-      cur = con.cursor()
-      cur.execute('insert into logins (email, name, password)' 'values(%s, %s, %s)', (email, name, password))
-      cur.close()
-      con.close()
-    
-      return render (request, 'login.html')
-    
-    if email:
-        messages('Email ja esta registrado', 'success')
+  if (request.method == 'POST'):
+      email = request.POST['email']
+      if not email.strip():
+        print("Email nao pode ficar vazio")
         return render (request, 'signup.html')
-    
-    #create a new user
-    new_user = cur.cursor(email=email, name=name, password=generate_password_hash(password, method='sha256'))
-    
-    #add the user to database
-    cur.session.add(new_user)
-    cur.session.commit()
-    
+      username = request.POST['name']
+      if not username.strip():
+        print("Nome nao pode ficar vazio")
+        return render (request, 'signup.html')
+      password = request.POST['password']
+      if not password.strip():
+        print("Senha nao pode ficar vazio")
+        return render (request, 'signup.html')
 
+      if User.objects.filter(username=username, email=email).exists():
+        print("Usuario ja possui cadastro!!")
+        return render (request, 'signup.html')
+      else:
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+        print("Usuario cadastrado com sucesso!!!")
+        return render (request, 'login.html')
+    
+  else:
+    return render(request, 'signup.html')
+  
 
 
 @login_required
-def logouts(request):
-    logout()
-    return redirect(url_for('login'))
-
-
-def usuario(request):
-    if(request.method == 'GET'):
-        #lista = User.query.filter_by(email='fabio@fabio.com.br').first()
-        #if lista:
-        #    print(lista)
-        #    return str(lista)
-        #else:
-        #    return str('nao possui usuario cadastrado')
-
-        data = [{
-            "Modules" : 16,
-            "Subject" : "estrutura de dados e algoritmos 1",
-        },
-        {
-            "Modules" : 17,
-            "Subject" : "estrutura de dados e algoritmos 2",
-        }]
-        return jsonify(data)
+def logout(request):
+    auth.logout(request)
+    return redirect ('login')

@@ -1,12 +1,32 @@
 import psycopg2
 
-def conecta_bd():
-    conexao = psycopg2.connect(host='0.0.0.0',
-                            database='auth',
-                            port=5432,
-                            user='postgres',
-                            password='postgres')
-    return conexao
+def conecta_bd(sql):
+	#establishing the connection
+	conn = psycopg2.connect(database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432')
+	conn.autocommit = True
+
+	#Creating a cursor object using the cursor() method
+	cursor = conn.cursor()
+
+	#Preparing query to create a database
+	sql = '''CREATE database auth'''
+
+	#Creating a database
+	cursor.execute(sql)
+	print("Database created successfully........")
+
+	#Closing the connection
+	conn.close()
+	conecta_bd(sql)
+
+
+#def conecta_bd():
+#    conexao = psycopg2.connect(host='127.0.0.1',
+#                            database='auth',
+#                            port=5432,
+#                            user='postgres',
+#                            password='postgres')
+#    return conexao
 
 def criar_tabela(sql):
     conexao = conecta_bd()
@@ -21,16 +41,25 @@ def criar_tabela(sql):
         return 1
     cur.close()
 
-sql = '''CREATE TABLE public.pessoas(
-      id SERIAL PRIMARY KEY,
-      nome TEXT,
-      sobrenome TEXT,
-      cpf INTEGER,
-      endereco TEXT,
-      criado DATE
-    )'''
+#sql = '''CREATE TABLE public.pessoas(
+#    id SERIAL PRIMARY KEY,
+#    nome TEXT,
+#	sobrenome TEXT,
+#    cpf INTEGER,
+#    endereco TEXT,
+#    criado DATE)
+#    '''
+        
+#sql = '''CREATE TABLE public.produtos(
+#    id SERIAL PRIMARY KEY,
+#    nome TEXT,
+#	preco TEXT,
+#    quantidade INTEGER,
+#    descricao TEXT,
+#    criado DATE
+#	)'''
 
-criar_tabela(sql)
+#criar_tabela(sql)
 
   # Cria os registros no SQL
 produtos = [
@@ -91,6 +120,15 @@ def atualizar_pessoa(id, nome, sobrenome, cpf, endereco):
     
   )
 
+def atualizar_login(email, nome, password):
+  conecta_bd(
+  """
+  update signup set email = ?, nome = ?, senha = ? where id = ?
+  """,
+  (email, nome, password, id)
+    
+  )
+
 # adiciona um item no banco de dados
 def adicionar(nome, preco, quantidade, descricao):
   conecta_bd(
@@ -107,5 +145,14 @@ def adicionar_pessoa(nome, sobrenome, cpf, endereco):
   insert into produtos (nome, sobrenome, cpf, endereco) values (?,?,?,?)
   """,
     (nome, sobrenome, cpf, endereco)
+    
+  )
+
+def adicionar_signup(email, nome, password):
+  conecta_bd(
+  """
+  insert into login (email, nome, password) values (?,?,?)
+  """,
+    (email, nome, password)
     
   )

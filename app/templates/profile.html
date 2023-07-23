@@ -1,7 +1,18 @@
 {% extends "bases/bases.html" %}
-
+{% if messages %}
+<div class="alert alert-danger alert-dismissible">
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  <strong>Erro!</strong>
+  <br>
+  {% for mensagem in messages %}
+  {{ mensagem }}
+  {% endfor %}
+ 
+</div>
 {% block content %}
 <h1 class="title">
-  Bem vindo, {{ name }}!
+  Bem vindo,  {{ user.email }}  !
 </h1>
 {% endblock %}
+
+{% endif %}
