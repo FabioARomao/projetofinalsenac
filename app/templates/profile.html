@@ -10,9 +10,27 @@
  
 </div>
 {% block content %}
-<h1 class="title">
-  Bem vindo,  {{ user.email }}  !
-</h1>
+
+<div class="hero is-fullheight-with-navbar is-dark">
+  <div class="navbar-end">
+    <div class="navbar-item">
+      <div class="buttons">
+        <a class="button is-danger", href="logout">
+          <strong>Sair</strong>
+         </a>
+      </div>
+    </div>
+
+  </div>
+  <h4 class="title">
+    Bem vindo,  {{ user.username }}  !
+  </h4>
+  <div class="hero-body">
+
+</div>
+
+</div>
+
 {% endblock %}
 
 {% endif %}
