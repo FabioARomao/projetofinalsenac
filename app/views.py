@@ -19,15 +19,14 @@ def index(request):
 
 def remove(request, item_id):
         # Cria uma conexão com BD e importa o arquivo de CBD
-        conexao = psycopg2.connect(criacaoBD.arquivo)
+        conexao = psycopg2.connect(criacaoBD.conecta_bd(sql))
         
         # Criar um cursor
         cursor = conexao.cursor()
         
         # Executando a remoção no BD
-        cursor.execute("""
-          DELETE FROM pessoas where id = ?
-        """, (item_id,))
+        sql = '''DELETE FROM app_produto where id = ?'''
+        cursor.execute(sql, item_id)
         
         #Subindo as alterações realizadas no BD
         conexao.commit()
@@ -38,7 +37,7 @@ def remove(request, item_id):
         # Atualizar a tela
         dados = importacaoBD.obtendoProdutos()
         devolver = {'itens': dados}
-        return render(request, 'index.html', devolver)
+        return render(request, 'produtos.html', devolver)
 
         #dados1 = importacaoBD.obtendoPessoas()
         #devolver = {'itens': dados1}
@@ -50,6 +49,7 @@ def remove(request, item_id):
 def produtos(request):
   dados = importacaoBD.obtendoProdutos()
   devolver = {'itens': dados}
+  #print(devolver)
   return render(request, 'produtos.html', devolver)
 
 def pessoas(request):

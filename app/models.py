@@ -7,7 +7,6 @@ class Pessoa(models.Model):
   sobrenome = models.CharField(max_length=255)
   cpf = models.CharField(max_length=255)
   endereco = models.CharField(max_length=255)
-  criado = models.DateTimeField(default=datetime.now, blank=False)
 
 class Produto(models.Model):
   id = models.AutoField(primary_key=True)
@@ -15,18 +14,15 @@ class Produto(models.Model):
   preco = models.CharField(max_length=255)
   quantidade = models.CharField(max_length=255)
   descricao = models.CharField(max_length=255)
-  criado = models.DateTimeField(default=datetime.now, blank=False)
 
 class Login(models.Model):
   id = models.AutoField(primary_key=True)
   email = models.CharField(max_length=255)
   passowrd = models.CharField(max_length=255)
-  criado = models.DateTimeField(default=datetime.now, blank=False)
 
 class Signup(models.Model):
   id = models.AutoField(primary_key=True)
   email = models.CharField(max_length=255)
   nome = models.CharField(max_length=255)
   password = models.CharField(max_length=255)
-  criado = models.DateTimeField(default=datetime.now, blank=False)
   

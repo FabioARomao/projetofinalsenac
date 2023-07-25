@@ -1,21 +1,24 @@
 import psycopg2 as SQL
 #import sqlite3 as SQL
-from . import criacaoBD as CBD
+#from . import criacaoBD
+import criacaoBD
 
 # Obtendo dados
-def obtendoProdutos():
+def obtendoProdutos(sql):
   
   # Cria uma conexão com BD e importa o arquivo de CB
-  conexao = SQL.connect(CBD.arquivo)
+  conexao = SQL.connect(criacaoBD.conecta_bd(sql))
+  print(conexao)
   
   # Cria um cursor para BD
-  cursor = conexao.cursor()
+  cur = conexao.cursor()
   
   # Seleciona todos os dados da tabela produtos
-  cursor.execute("SELECT * FROM produtos")
+  sql = '''SELECT * FROM app_produto'''
+  cur.execute(sql)
   
   # Extrair os dados da tabela
-  dados = cursor.fetchall()
+  dados = cur.fetchall()
   
   # Criação para exportação da Base
   base = []
@@ -30,8 +33,9 @@ def obtendoProdutos():
       'Descrição' : registro[4]
     }
     base.append(dado)
+    print(dado)
 
   # Fecha a conexao
   conexao.close()
 
-  return base
+  print(base)

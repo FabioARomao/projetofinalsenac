@@ -1,42 +1,41 @@
 import psycopg2
 
-def conecta_bd(sql):
-	#establishing the connection
-	conn = psycopg2.connect(database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432')
-	conn.autocommit = True
+def conecta_bd():
+    conn = psycopg2.connect(database='postgres', user='postgres', password='postgres', host='127.0.0.1', port='5432')
+    cur = conn.cursor()
+    print("Base Conectada!!!")
+    #cur.close()
+    #conn.close()
 
-	#Creating a cursor object using the cursor() method
-	cursor = conn.cursor()
-
-	#Preparing query to create a database
-	sql = '''CREATE database auth'''
-
-	#Creating a database
-	cursor.execute(sql)
-	print("Database created successfully........")
-
-	#Closing the connection
-	conn.close()
-	conecta_bd(sql)
-
-
-#def conecta_bd():
-#    conexao = psycopg2.connect(host='127.0.0.1',
-#                            database='auth',
-#                            port=5432,
-#                            user='postgres',
-#                            password='postgres')
-#    return conexao
-
-def criar_tabela(sql):
-    conexao = conecta_bd()
-    cur = conexao.cursor()
+def create_bd(sql):
+    conecta_bd(sql)
     try:
-        cur.execute(sql)
-        conexao.commit()
+        #Preparing query to create a database
+        sql = '''CREATE database postgres'''
+        #Creating a database
+        conecta_bd.execute(sql)
+        print("Database created successfully........")
+        conecta_bd.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print("Error: %s" % error)
-        conexao.rollback()
+        #cursor.execute('''CREATE database postgres''')
+        conecta_bd.rollback()
+        conecta_bd.close()
+        return 1
+    #cursor.close()
+    #cursor.execute(sql)
+    #sql = '''show databases'''
+    #conn.close()
+
+def criar_tabela(sql):
+    conn = conecta_bd()
+    cur = conn.cursor()
+    try:
+        cur.execute(sql)
+        conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        conn.rollback()
         cur.close()
         return 1
     cur.close()
@@ -61,13 +60,26 @@ def criar_tabela(sql):
 
 #criar_tabela(sql)
 
+def inserir_db(sql):
+    conn = conecta_bd(sql)
+    cur = conn.cursor()
+    try:
+        cur.execute(adicionar)
+        conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        cur.rollback()
+        conn.close()
+        return 1
+    conn.close()
+
   # Cria os registros no SQL
-produtos = [
-    #Nome,  Preço, Quantidade, Descrição
-    ('Caneta',5.00,100,"Caneta azul, azul caneta"),
-    ('Laptop', 2999.99, 100, "Notebook da Xuxa em parceria com Positivo"),
-    ('iPhone', 14999.99, 1000, "Celular mais caro do universo"),
-    ('Galaxy S23', 5999.99, 500, "Celular que trava"),
+sql = '''INSERT INTO public.app_produto
+(nome, preco, quantidade, descricao)
+VALUES('Caneta',5.00,100,'Caneta azul, azul caneta'),
+    ('Laptop', 2999.99, 100, 'Notebook da Xuxa em parceria com Positivo'),
+    ('iPhone', 14999.99, 1000, 'Celular mais caro do universo'),
+    ('Galaxy S23', 5999.99, 500, 'Celular que trava'),
     ('Televisão', 799.99, 10, 'Uma TV de alta definição com ampla variedade de recursos.'),
       ('Câmera digital', 399.99, 100, 'Uma câmera portátil para capturar fotos e vídeos.'),
       ('Fones de ouvido', 99.99, 50, 'Fones de ouvido sem fio com cancelamento de ruído.'),
@@ -85,21 +97,8 @@ produtos = [
       ('Ferro de passar roupa', 39.99, 1, 'Um ferro para passar roupas e remover rugas.'),
       ('Liquidificador', 49.99, 5,'Um aparelho para misturar alimentos e fazer sucos.'),
       ('Secador de cabelo', 29.99, 10, 'Um dispositivo para secar cabelos com ar quente.'),
-      ('Ventilador de teto', 99.99, 100, 'Um ventilador fixado no teto para circulação de ar.')
-  ]
-
-def inserir_db(sql):
-    conexao = conecta_bd()
-    cur = conexao.cursor()
-    try:
-        cur.execute(sql)
-        conexao.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error: %s" % error)
-        conexao.rollback()
-        cur.close()
-        return 1
-    cur.close()
+      ('Ventilador de teto', 99.99, 100, 'Um ventilador fixado no teto para circulação de ar.');
+'''
 
 #Atualiza um item do banco de dados
 def atualizar(id, nome, preco, quantidade, descricao):
@@ -133,7 +132,7 @@ def atualizar_login(email, nome, password):
 def adicionar(nome, preco, quantidade, descricao):
   conecta_bd(
   """
-  insert into produtos (nome, preco, quantidade, descricao) values (?,?,?,?)
+  insert into app_produto (nome, preco, quantidade, descricao) values (?,?,?,?)
   """,
     (nome, preco, quantidade, descricao)
     
